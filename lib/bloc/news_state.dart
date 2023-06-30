@@ -8,7 +8,6 @@ class LoadingNewsState extends NewsState {}
 
 class FetchedNewsState extends NewsState {
   final News news;
-  //final Res res;
   FetchedNewsState(this.news);
 }
 

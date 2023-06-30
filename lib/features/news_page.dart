@@ -5,8 +5,9 @@ import 'package:thousand_it_test/bloc/news_bloc.dart';
 import 'package:thousand_it_test/bloc/news_event.dart';
 import 'package:thousand_it_test/bloc/news_state.dart';
 import 'package:thousand_it_test/features/details_page.dart';
-import 'package:thousand_it_test/widgets/favourite_widget.dart';
 import 'package:thousand_it_test/widgets/vote_widget.dart';
+
+import '../widgets/favourite_widget.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({super.key});
@@ -17,11 +18,23 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   late NewsBloc newsBloc;
+  ScrollController scrollController = ScrollController();
+  int page = 1;
+
   @override
   void initState() {
     super.initState();
+    scrollController.addListener(scrollListener);
     newsBloc = BlocProvider.of<NewsBloc>(context);
-    newsBloc.add(FetchNewsEvent());
+    newsBloc.add(FetchNewsEvent(page));
+  }
+
+  Future<void> scrollListener() async {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      page = page + 1;
+      newsBloc.add(FetchNewsEvent(page));
+    }
   }
 
   @override
@@ -35,13 +48,19 @@ class _NewsPageState extends State<NewsPage> {
             strokeWidth: 3,
             triggerMode: RefreshIndicatorTriggerMode.onEdge,
             onRefresh: () async {
-              newsBloc.add(FetchNewsEvent());
+              // while ( < 10) {
+              newsBloc.add(FetchNewsEvent(page));
+              //   page++;
+              // }
               await Future.delayed(const Duration(milliseconds: 1500));
             },
             child: ListView.separated(
+                controller: scrollController,
                 itemBuilder: (BuildContext context, index) {
-                  state.news.results!.removeWhere(
-                      (item) => state.news.results![index].poster_path == null);
+                  state.news.results!.removeWhere((item) {
+                    return state.news.results![index].poster_path == null;
+                    // return state.news[0];
+                  });
                   return Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -105,7 +124,12 @@ class _NewsPageState extends State<NewsPage> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      '${state.news.results![index].title}',
+                                      (state.news.results![index].title != null)
+                                          ? state.news.results![index].title
+                                              .toString()
+                                          : state.news.results![index]
+                                              .original_name
+                                              .toString(),
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -113,9 +137,14 @@ class _NewsPageState extends State<NewsPage> {
                                       ),
                                     ),
                                     Text(
-                                      state.news.results![index].release_date
-                                          .toString()
-                                          .substring(0, 10),
+                                      (state.news.results![index]
+                                                  .release_date !=
+                                              null)
+                                          ? state
+                                              .news.results![index].release_date
+                                              .toString()
+                                              .substring(0, 10)
+                                          : '',
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,

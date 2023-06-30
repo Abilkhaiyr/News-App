@@ -29,7 +29,7 @@ Result _$ResultFromJson(Map<String, dynamic> json) => Result(
       name: json['name'] as String?,
       originalLanguage: $enumDecodeNullable(
           _$OriginalLanguageEnumMap, json['originalLanguage']),
-      originalName: json['originalName'] as String?,
+      original_name: json['original_name'] as String?,
       overview: json['overview'] as String?,
       poster_path: json['poster_path'] as String?,
       mediaType: $enumDecodeNullable(_$MediaTypeEnumMap, json['mediaType']),
@@ -58,7 +58,7 @@ Map<String, dynamic> _$ResultToJson(Result instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'originalLanguage': _$OriginalLanguageEnumMap[instance.originalLanguage],
-      'originalName': instance.originalName,
+      'original_name': instance.original_name,
       'overview': instance.overview,
       'poster_path': instance.poster_path,
       'mediaType': _$MediaTypeEnumMap[instance.mediaType],

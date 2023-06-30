@@ -4,10 +4,10 @@ part 'news.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class News {
-  final int? page;
-  final List<Result>? results;
-  final int? totalPages;
-  final int? totalResults;
+  int? page;
+  List<Result>? results;
+  int? totalPages;
+  int? totalResults;
 
   News({
     this.page,
@@ -24,24 +24,24 @@ class News {
 @JsonSerializable(explicitToJson: true)
 class Result {
   bool? adult;
-  final String? backdrop_path;
-  final int? id;
-  final String? name;
-  final OriginalLanguage? originalLanguage;
-  final String? originalName;
-  final String? overview;
-  final String? poster_path;
-  final MediaType? mediaType;
-  final List<int>? genreIds;
-  final double? popularity;
-  final DateTime? firstAirDate;
-  final double? vote_average;
-  final int? voteCount;
-  final List<String>? originCountry;
-  final String? title;
-  final String? originalTitle;
-  final DateTime? release_date;
-  final bool? video;
+  String? backdrop_path;
+  int? id;
+  String? name;
+  OriginalLanguage? originalLanguage;
+  String? original_name;
+  String? overview;
+  String? poster_path;
+  MediaType? mediaType;
+  List<int>? genreIds;
+  double? popularity;
+  DateTime? firstAirDate;
+  double? vote_average;
+  int? voteCount;
+  List<String>? originCountry;
+  String? title;
+  String? originalTitle;
+  DateTime? release_date;
+  bool? video;
 
   Result({
     this.adult,
@@ -49,7 +49,7 @@ class Result {
     this.id,
     this.name,
     this.originalLanguage,
-    this.originalName,
+    this.original_name,
     this.overview,
     this.poster_path,
     this.mediaType,

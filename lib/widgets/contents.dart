@@ -2,28 +2,40 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:thousand_it_test/bloc/news_bloc.dart';
+import 'package:thousand_it_test/bloc/news_event.dart';
 import 'package:thousand_it_test/bloc/news_state.dart';
 import 'package:thousand_it_test/features/details_page.dart';
 import 'package:thousand_it_test/model/news.dart';
 import 'package:thousand_it_test/widgets/favourite_widget.dart';
 import 'package:thousand_it_test/widgets/vote_widget.dart';
 
-class LandscapeWidget extends StatefulWidget {
-  final News news;
-
-  const LandscapeWidget({super.key, required this.news});
+class Contents extends StatefulWidget {
+  final ScrollController scrollController;
+  final News public;
+  const Contents(
+      {super.key, required this.scrollController, required this.public});
 
   @override
-  State<LandscapeWidget> createState() => _LandscapeWidgetState();
+  State<Contents> createState() => _ContentsState();
 }
 
-class _LandscapeWidgetState extends State<LandscapeWidget> {
+class _ContentsState extends State<Contents> {
   late NewsBloc newsBloc;
+  int page = 1;
   @override
   void initState() {
     super.initState();
+    widget.scrollController.addListener(scrollListener);
     newsBloc = BlocProvider.of<NewsBloc>(context);
-    // newsBloc.add(FetchNewsEvent());
+    newsBloc.add(FetchNewsEvent(page));
+  }
+
+  Future<void> scrollListener() async {
+    if (widget.scrollController.position.pixels ==
+        widget.scrollController.position.maxScrollExtent) {
+      page = page + 1;
+      newsBloc.add(FetchNewsEvent(page));
+    }
   }
 
   @override
@@ -32,37 +44,42 @@ class _LandscapeWidgetState extends State<LandscapeWidget> {
       builder: (context, state) {
         if (state is FetchedNewsState) {
           return RefreshIndicator(
-            // displacement: 250,
             backgroundColor: Colors.amber,
             color: Colors.red,
             strokeWidth: 3,
             triggerMode: RefreshIndicatorTriggerMode.onEdge,
             onRefresh: () async {
-              // newsBloc.add(FetchNewsEvent());
+              // while ( < 10) {
+              newsBloc.add(FetchNewsEvent(page));
+              //   page++;
+              // }
               await Future.delayed(const Duration(milliseconds: 1500));
             },
             child: ListView.separated(
+                controller: widget.scrollController,
                 itemBuilder: (BuildContext context, index) {
-                  widget.news.results!.removeWhere((item) =>
-                      widget.news.results![index].poster_path == null);
+                  state.news.results!.removeWhere((item) {
+                    return state.news.results![index].poster_path == null;
+                    // return state.news[0];
+                  });
                   return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 150, vertical: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                     child: InkWell(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => DetailsPage(
-                                    title: widget.news.results![index].title,
-                                    voteAverage: widget
-                                        .news.results![index].vote_average,
+                                    title: state.news.results![index].title,
+                                    voteAverage:
+                                        state.news.results![index].vote_average,
                                     posterPath:
-                                        widget.news.results![index].poster_path,
-                                    releaseDate: widget
-                                        .news.results![index].release_date,
+                                        state.news.results![index].poster_path,
+                                    releaseDate:
+                                        state.news.results![index].release_date,
                                     overview:
-                                        widget.news.results![index].overview,
+                                        state.news.results![index].overview,
                                   )),
                         );
                       },
@@ -73,15 +90,15 @@ class _LandscapeWidgetState extends State<LandscapeWidget> {
                               borderRadius: BorderRadius.circular(12),
                               image: DecorationImage(
                                   opacity: 0.5,
-                                  image: widget.news.results![index]
-                                          .poster_path!.isNotEmpty
+                                  image: state.news.results![index].poster_path!
+                                          .isNotEmpty
                                       ? NetworkImage(
                                           'https://image.tmdb.org/t/p/w200'
-                                          '${widget.news.results![index].poster_path}')
+                                          '${state.news.results![index].poster_path}')
                                       : const NetworkImage(''),
-                                  fit: BoxFit.cover),
+                                  fit: BoxFit.fill),
                             ),
-                            height: 550,
+                            height: 450,
                           ),
                           Column(
                             children: [
@@ -95,7 +112,7 @@ class _LandscapeWidgetState extends State<LandscapeWidget> {
                                     InkWell(
                                       onTap: null,
                                       child: VoteWidget(
-                                        voteAverage: widget
+                                        voteAverage: state
                                             .news.results![index].vote_average,
                                       ),
                                     ),
@@ -108,19 +125,29 @@ class _LandscapeWidgetState extends State<LandscapeWidget> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      '${widget.news.results![index].title}',
+                                      (state.news.results![index].title != null)
+                                          ? state.news.results![index].title
+                                              .toString()
+                                          : state.news.results![index]
+                                              .original_name
+                                              .toString(),
                                       style: const TextStyle(
-                                        fontSize: 35,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
                                     ),
                                     Text(
-                                      widget.news.results![index].release_date
-                                          .toString()
-                                          .substring(0, 10),
+                                      (state.news.results![index]
+                                                  .release_date !=
+                                              null)
+                                          ? state
+                                              .news.results![index].release_date
+                                              .toString()
+                                              .substring(0, 10)
+                                          : '',
                                       style: const TextStyle(
-                                        fontSize: 30,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
@@ -137,7 +164,7 @@ class _LandscapeWidgetState extends State<LandscapeWidget> {
                 },
                 separatorBuilder: (BuildContext context, int index) =>
                     const SizedBox(),
-                itemCount: widget.news.results!.length),
+                itemCount: state.news.results!.length),
           );
         } else if (state is LoadingNewsState) {
           return const Center(

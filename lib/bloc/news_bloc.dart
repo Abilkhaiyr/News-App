@@ -11,7 +11,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     on<FetchNewsEvent>((event, emit) async {
       emit(LoadingNewsState());
       try {
-        News newsModel = await newsRepo.fetchNews();
+        News newsModel = await newsRepo.fetchNews(event.page);
         //Res res = await newsRepo.fetchNew();
         // List<Result> res = await newsRepo.fetchQ();
         emit(FetchedNewsState(newsModel));

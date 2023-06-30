@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:thousand_it_test/bloc/news_bloc.dart';
-import 'package:thousand_it_test/bloc/news_event.dart';
 import 'package:thousand_it_test/bloc/news_state.dart';
 import 'package:thousand_it_test/widgets/favourite_widget.dart';
 import 'package:thousand_it_test/widgets/vote_widget.dart';
@@ -29,12 +28,12 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   late NewsBloc newsBloc;
 
-  @override
-  void initState() {
-    super.initState();
-    newsBloc = BlocProvider.of<NewsBloc>(context);
-    newsBloc.add(FetchNewsEvent());
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   newsBloc = BlocProvider.of<NewsBloc>(context);
+  //   newsBloc.add(FetchNewsEvent());
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +46,7 @@ class _DetailsPageState extends State<DetailsPage> {
             strokeWidth: 3,
             triggerMode: RefreshIndicatorTriggerMode.onEdge,
             onRefresh: () async {
-              newsBloc.add(FetchNewsEvent());
+              // newsBloc.add(FetchNewsEvent());
               await Future.delayed(const Duration(milliseconds: 1500));
             },
             child: Scaffold(

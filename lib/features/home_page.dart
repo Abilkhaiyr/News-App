@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thousand_it_test/features/news_page.dart';
+import 'package:thousand_it_test/model/news.dart';
 import 'package:thousand_it_test/widgets/landscape_widget.dart';
 import 'package:thousand_it_test/widgets/orientation_widget.dart';
 
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  News news = News();
   @override
   void initState() {
     super.initState();
@@ -25,9 +27,11 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         backgroundColor: const Color(0xff253B49),
       ),
-      body: const OrientationWidget(
-        portrait: NewsPage(),
-        landscape: LandscapeWidget(),
+      body: OrientationWidget(
+        portrait: const NewsPage(),
+        landscape: LandscapeWidget(
+          news: news,
+        ),
       ),
     );
   }
